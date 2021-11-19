@@ -13,7 +13,7 @@ services:
       - db
 
   db:
-    image: mysql:5.7.22
+    image: mysql/mysql-server:8.0.23
     restart: always
     environment:
       MYSQL_DATABASE: admin
