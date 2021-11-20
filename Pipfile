@@ -10,6 +10,8 @@ django-cors-headers = "==3.5.0"
 pika = "==1.1.0"
 Django = "==3.2.9"
 pymysql = "*"
+python-dotenv = "==0.15.0"
+mysqlclient = "==2.0.1"
 
 [dev-packages]
 flake8 = "*"

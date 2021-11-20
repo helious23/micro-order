@@ -5,7 +5,7 @@ app_name = "orders"
 
 urlpatterns = [
     path(
-        "shop/",
+        "shop",
         views.ShopViewSet.as_view({"get": "list", "post": "create"}),
         name="shop",
     ),
@@ -16,7 +16,7 @@ urlpatterns = [
         ),
     ),
     path(
-        "order/",
+        "order",
         views.OrderViewSet.as_view({"get": "list", "post": "create"}),
         name="order",
     ),

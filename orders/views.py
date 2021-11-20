@@ -1,13 +1,13 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from . import serializers
-from . import models
+from . import models, serializers, producer
 
 
 class ShopViewSet(viewsets.ViewSet):
     def list(self, request):  # GET /api/shop
         shops = models.Shop.objects.all()
         serializer = serializers.ShopSerializer(shops, many=True)
+        producer.publish()
         return Response(serializer.data)
 
     def create(self, request):  # POST /api/shop
@@ -49,18 +49,18 @@ class OrderViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrive(self, request, pk=None):  # GET /api/order/<str:idx>
-        order = models.Order.get(pk=pk)
+        order = models.Order.objects.get(pk=pk)
         serializer = serializers.OrderSerializer(order)
         return Response(serializer.data)
 
     def update(self, request, pk=None):  # PUT /api/order/<str:idx>
-        order = models.Order.get(pk=pk)
+        order = models.Order.objects.get(pk=pk)
         serializer = serializers.OrderSerializer(instance=order, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
     def destroy(self, request, pk=None):  # DELETE /api/order/<str:idx>
-        order = models.Order.get(pk=pk)
+        order = models.Order.objects.get(pk=pk)
         order.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

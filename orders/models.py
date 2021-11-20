@@ -7,7 +7,7 @@ class Shop(models.Model):
 
 
 class Order(models.Model):
-    order_date = models.DateTimeField("date ordered")
+    order_date = models.DateTimeField("date ordered", auto_now_add=True)
     address = models.CharField(max_length=40)
     deliver_finithed = models.BooleanField(default=False)
     shop = models.ForeignKey(Shop, related_name="orders", on_delete=models.CASCADE)
