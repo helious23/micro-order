@@ -7,13 +7,13 @@ class ShopViewSet(viewsets.ViewSet):
     def list(self, request):  # GET /api/shop
         shops = models.Shop.objects.all()
         serializer = serializers.ShopSerializer(shops, many=True)
-        producer.publish()
         return Response(serializer.data)
 
     def create(self, request):  # POST /api/shop
         serializer = serializers.ShopSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)  # validation
         serializer.save()
+        producer.publish("shop_created", serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrive(self, request, pk=None):  # GET /api/shop/<str:idx>
@@ -28,11 +28,13 @@ class ShopViewSet(viewsets.ViewSet):
         )  # 해당 shop을 instance 로 받아온 다음 data 를 request.data 로 바꿈
         serializer.is_valid(raise_exception=True)  # validation
         serializer.save()
+        producer.publish("shop_updated", serializer.data)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
     def destroy(self, request, pk=None):  # DELETE /api/shop/<str:idx>
         shop = models.Shop.objects.get(pk=pk)
         shop.delete()
+        producer.publish("shop_deleted", pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -46,6 +48,7 @@ class OrderViewSet(viewsets.ViewSet):
         serializer = serializers.OrderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        producer.publish("order_created", serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrive(self, request, pk=None):  # GET /api/order/<str:idx>
@@ -58,9 +61,11 @@ class OrderViewSet(viewsets.ViewSet):
         serializer = serializers.OrderSerializer(instance=order, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        producer.publish("order_updated", serializer.data)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
     def destroy(self, request, pk=None):  # DELETE /api/order/<str:idx>
         order = models.Order.objects.get(pk=pk)
         order.delete()
+        producer.publish("order_deleted", pk)
         return Response(status=status.HTTP_204_NO_CONTENT)

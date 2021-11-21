@@ -13,14 +13,25 @@ services:
         - .dbdata:/var/lib/mysql
       ports:
         - 33066:3306
+        
   backend:
     build: 
       context: .
       dockerfile: Dockerfile
+    command: 'python manage.py runserver 0.0.0.0:8000'
     ports:
       - 8000:8000
     volumes:
       - .:/app
     depends_on:
       - db
+  
+  queue:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: 'python consumer.py'
+    depends_on:
+      - db
+  
       
